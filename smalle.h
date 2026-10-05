@@ -1,5 +1,5 @@
-/* E:\download\04B_03__.TTF (3/25/2003 9:22:06 PM)
-   StartOffset(h): 00000000, EndOffset(h): 00004C23, Length(h): 00004C24 */
+
+
 
 unsigned char smalle[19492] = {
 	0x00, 0x01, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x30, 0x00, 0x03, 0x00, 0xB0,

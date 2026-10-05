@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     fontConfig.FontDataOwnedByAtlas = false;
     fontConfig.GlyphMinAdvanceX = 14.0f;
     KrxSlaxy::g_FontAwesome = io.Fonts->AddFontFromMemoryCompressedTTF(
-        FontAwesome6Solid_compressed_data, FontAwesome6Solid_compressed_size, 
+        FontAwesome6Solid_compressed_data, FontAwesome6Solid_compressed_size,
         14.0f * main_scale, &fontConfig, faRanges
     );
     fontConfig.FontDataOwnedByAtlas = false;
@@ -138,7 +138,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         unsigned char* imageData = stbi_load_from_memory(
             menuBackground, sizeof(menuBackground), &width, &height, &channels, 4
         );
-        
+
         if (imageData) {
             D3D11_TEXTURE2D_DESC desc = {};
             desc.Width = width;
@@ -149,30 +149,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             desc.SampleDesc.Count = 1;
             desc.Usage = D3D11_USAGE_DEFAULT;
             desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-            
+
             D3D11_SUBRESOURCE_DATA subResource = {};
             subResource.pSysMem = imageData;
             subResource.SysMemPitch = width * 4;
-            
+
             ID3D11Texture2D* pTexture = nullptr;
             g_pd3dDevice->CreateTexture2D(&desc, &subResource, &pTexture);
-            
+
             if (pTexture) {
                 D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
                 srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
                 srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
                 srvDesc.Texture2D.MipLevels = 1;
-                
+
                 ID3D11ShaderResourceView* pSRV = nullptr;
                 g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, &pSRV);
-                
+
                 KrxSlaxy::g_BackgroundTexture = (void*)pSRV;
                 KrxSlaxy::g_BackgroundWidth = width;
                 KrxSlaxy::g_BackgroundHeight = height;
-                
+
                 pTexture->Release();
             }
-            
+
             stbi_image_free(imageData);
         }
     }
@@ -214,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
-        
+
         if (appState == AppState::Loader) {
             bool loaderComplete = KrxSlaxy::Loader::GUI::Render();
             if (loaderComplete) {
@@ -327,6 +327,5 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }
-
 
 

@@ -22,10 +22,10 @@ namespace KrxSlaxy {
     void* g_LogoTexture = nullptr;
     int g_LogoWidth = 0;
     int g_LogoHeight = 0;
-    
+
     bool Keybind::IsActive() const {
         if (key == 0) return false;
-        
+
         switch (type) {
             case KeybindType::Hold:
                 return (GetAsyncKeyState(key) & 0x8000) != 0;
@@ -36,7 +36,7 @@ namespace KrxSlaxy {
         }
         return false;
     }
-    
+
     const char* Keybind::GetKeyName() const {
         if (key == 0) return "None";
         if (key == VK_LBUTTON) return "Mouse 1";
@@ -80,10 +80,10 @@ namespace KrxSlaxy {
             letter[1] = 0;
             return letter;
         }
-        
+
         return "Unknown";
     }
-    
+
     const char* Keybind::GetTypeName(KeybindType t) {
         switch (t) {
             case KeybindType::Hold: return "Hold";
@@ -94,17 +94,17 @@ namespace KrxSlaxy {
     }
     void ProcessKeybinds() {
         static std::map<std::string, bool> prevKeyState;
-        
+
         for (auto& pair : g_Config.keybinds) {
             Keybind& kb = pair.second;
             if (kb.key == 0 || kb.type != KeybindType::Toggle) continue;
-            
+
             bool isPressed = (GetAsyncKeyState(kb.key) & 0x8000) != 0;
             bool wasPressed = prevKeyState[pair.first];
             if (isPressed && !wasPressed) {
                 kb.active = !kb.active;
             }
-            
+
             prevKeyState[pair.first] = isPressed;
         }
     }
@@ -120,7 +120,7 @@ namespace KrxSlaxy {
             float columnWidths[8];
             float columnX[8];
         } s_LayoutState;
-        
+
         std::string ToLower(const char* text) {
             std::string result(text);
             std::transform(result.begin(), result.end(), result.begin(), ::tolower);
@@ -141,27 +141,27 @@ namespace KrxSlaxy {
 
         void EndFrame() {
         }
-        
+
         void DrawDiagonalPattern(ImDrawList* dl, ImVec2 min, ImVec2 max, float spacing, float lineWidth, ImU32 color) {
             float width = max.x - min.x;
             float height = max.y - min.y;
             float diagonal = width + height;
-            
+
             dl->PushClipRect(min, max, true);
-            
+
             for (float offset = -height; offset < width; offset += spacing) {
                 ImVec2 p1(min.x + offset, max.y);
                 ImVec2 p2(min.x + offset + height, min.y);
                 dl->AddLine(p1, p2, color, lineWidth);
             }
-            
+
             dl->PopClipRect();
         }
-        
+
         void DrawCrosshatchPattern(ImDrawList* dl, ImVec2 min, ImVec2 max, float spacing, float lineWidth, ImU32 color) {
             float width = max.x - min.x;
             float height = max.y - min.y;
-            
+
             dl->PushClipRect(min, max, true);
             for (float offset = -height; offset < width; offset += spacing) {
                 ImVec2 p1(min.x + offset, max.y);
@@ -173,23 +173,23 @@ namespace KrxSlaxy {
                 ImVec2 p2(min.x + offset - height, max.y);
                 dl->AddLine(p1, p2, color, lineWidth);
             }
-            
+
             dl->PopClipRect();
         }
         void DrawCarbonFiberPattern(ImDrawList* dl, ImVec2 min, ImVec2 max) {
             float cellW = 8.0f;
             float cellH = 12.0f;
             float gap = 2.0f;
-            
+
             ImU32 darkColor = IM_COL32(20, 20, 20, 255);
             ImU32 lightColor = IM_COL32(30, 30, 30, 255);
-            
+
             dl->PushClipRect(min, max, true);
-            
+
             int row = 0;
             for (float y = min.y; y < max.y; y += cellH + gap) {
                 float xOffset = (row % 2) * (cellW * 0.5f + gap * 0.5f);
-                
+
                 for (float x = min.x - cellW + xOffset; x < max.x + cellW; x += cellW + gap) {
                     ImVec2 cellMin(x, y);
                     ImVec2 cellMax(x + cellW, y + cellH);
@@ -202,7 +202,7 @@ namespace KrxSlaxy {
                 }
                 row++;
             }
-            
+
             dl->PopClipRect();
         }
 
@@ -214,12 +214,12 @@ namespace KrxSlaxy {
             for (int i = 0; i < numTeeth; i++) {
                 float angle1 = (float)i / numTeeth * IM_PI * 2.0f - IM_PI / numTeeth * 0.5f;
                 float angle2 = (float)i / numTeeth * IM_PI * 2.0f + IM_PI / numTeeth * 0.5f;
-                
+
                 ImVec2 p1(center.x + cosf(angle1) * outerRadius, center.y + sinf(angle1) * outerRadius);
                 ImVec2 p2(center.x + cosf(angle2) * outerRadius, center.y + sinf(angle2) * outerRadius);
                 ImVec2 p3(center.x + cosf(angle2) * (outerRadius + toothDepth), center.y + sinf(angle2) * (outerRadius + toothDepth));
                 ImVec2 p4(center.x + cosf(angle1) * (outerRadius + toothDepth), center.y + sinf(angle1) * (outerRadius + toothDepth));
-                
+
                 dl->AddQuadFilled(p1, p2, p3, p4, color);
             }
             dl->AddCircleFilled(center, outerRadius, color, 16);
@@ -241,7 +241,7 @@ namespace KrxSlaxy {
 
         void DrawTabIcon(ImDrawList* dl, ImVec2 center, float size, int iconType, ImU32 color) {
             const float r = size * 0.5f;
-            
+
             switch (iconType) {
                 case 0:
                 {
@@ -342,15 +342,15 @@ namespace KrxSlaxy {
 
         void RenderHeader(const char* title) {
             (void)title;
-            
+
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             ImVec2 headerMin = s.windowPos;
             ImVec2 headerMax(s.windowPos.x + s.windowSize.x, s.windowPos.y + style.headerHeight);
             dl->AddRectFilled(headerMin, headerMax, Colors::TopBar(), 8.0f, ImDrawFlags_RoundCornersTop);
-            
+
             float gradientWidth = s.windowSize.x * 0.40f;
             for (int i = 0; i < (int)s.windowSize.x; i++) {
                 ImU32 lineColor;
@@ -366,13 +366,13 @@ namespace KrxSlaxy {
                     lineColor, 1.5f
                 );
             }
-            
+
             float currentX = headerMin.x + 20.0f;
             float logoRadius = 14.0f;
             ImVec2 logoCenter(currentX + logoRadius, headerMin.y + style.headerHeight * 0.5f);
             DrawKrxSlaxyEmblem(dl, logoCenter, logoRadius, Colors::Accent(), Colors::AccentHover());
             currentX += logoRadius * 2.0f + 14.0f;
-            
+
             TextFont titleFont;
             titleFont.size = 15;
             titleFont.weight = FW_BOLD;
@@ -387,13 +387,13 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float tabWidth = 85.0f;
             const float tabsStartX = s.windowPos.x + 220.0f;
-            
+
             ImVec2 tabMin(tabsStartX + tabId * (tabWidth + 6.0f), s.windowPos.y + 12.0f);
             ImVec2 tabMax(tabMin.x + tabWidth, s.windowPos.y + style.headerHeight - 12.0f);
-            
+
             bool isActive = (*activeTab == tabId);
             bool isHovered = ImGui::IsMouseHoveringRect(tabMin, tabMax);
             bool clicked = false;
@@ -416,7 +416,7 @@ namespace KrxSlaxy {
                 clicked = true;
             }
             ImU32 tabTextColor = isActive ? Colors::TextActive() : Colors::LerpColor(Colors::TextInactive(), Colors::TextActive(), hoverAnim);
-            
+
             if (hoverAnim > 0.01f) {
                 ImU32 bgPill = Colors::WithAlpha(Colors::AccentDim(), 0.35f * hoverAnim);
                 dl->AddRectFilled(tabMin, tabMax, bgPill, 4.0f);
@@ -424,7 +424,7 @@ namespace KrxSlaxy {
                     dl->AddRect(tabMin, tabMax, Colors::Accent(), 4.0f, 0, 1.0f);
                 }
             }
-            
+
             std::string lowerLabel = ToLower(label);
             TextFont tabFont;
             tabFont.size = 13;
@@ -432,12 +432,12 @@ namespace KrxSlaxy {
             ImVec2 textSize = g_TextRenderer.MeasureText(lowerLabel, tabFont);
             ImVec2 textPos(tabMin.x + (tabWidth - textSize.x) * 0.5f, tabMin.y + (tabMax.y - tabMin.y - textSize.y) * 0.5f);
             g_TextRenderer.RenderText(dl, textPos, lowerLabel, tabTextColor, tabFont);
-            
+
             static std::map<int, float> s_underlineAnim;
             float targetUnderline = isActive ? 1.0f : 0.0f;
             float& underlineAnim = s_underlineAnim[tabId];
             underlineAnim = ImLerp(underlineAnim, targetUnderline, ImGui::GetIO().DeltaTime * 10.0f);
-            
+
             if (underlineAnim > 0.01f) {
                 float fullWidth = tabWidth - 16.0f;
                 float animatedWidth = fullWidth * underlineAnim;
@@ -446,7 +446,7 @@ namespace KrxSlaxy {
                 float halfWidth = animatedWidth * 0.5f;
                 dl->AddLine(ImVec2(centerX - halfWidth, lineY), ImVec2(centerX + halfWidth, lineY), Colors::Accent(), 2.0f);
             }
-            
+
             return clicked;
         }
 
@@ -454,15 +454,15 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float subTabWidth = 120.0f;
             const float footerY = s.windowPos.y + s.windowSize.y - style.footerHeight;
             const float totalWidth = 3 * subTabWidth;
             const float startX = s.windowPos.x + (s.windowSize.x - totalWidth) * 0.5f;
-            
+
             ImVec2 tabMin(startX + tabId * subTabWidth, footerY + 5.0f);
             ImVec2 tabMax(tabMin.x + subTabWidth, footerY + style.footerHeight - 5.0f);
-            
+
             bool isActive = (*activeTab == tabId);
             bool isHovered = ImGui::IsMouseHoveringRect(tabMin, tabMax);
             bool clicked = false;
@@ -476,7 +476,7 @@ namespace KrxSlaxy {
                     g_Config.interactiveMouseDown = true;
                 }
             }
-            
+
             if (isHovered && ImGui::IsMouseClicked(0)) {
                 if (*activeTab != tabId) {
                     g_Config.previousSubTab = *activeTab;
@@ -500,7 +500,7 @@ namespace KrxSlaxy {
             float targetUnderline = isActive ? 1.0f : 0.0f;
             float& underlineAnim = s_subUnderlineAnim[tabId];
             underlineAnim = ImLerp(underlineAnim, targetUnderline, ImGui::GetIO().DeltaTime * 10.0f);
-            
+
             if (underlineAnim > 0.01f) {
                 float fullWidth = subTabWidth - 20.0f;
                 float animatedWidth = fullWidth * underlineAnim;
@@ -518,7 +518,7 @@ namespace KrxSlaxy {
                     );
                 }
             }
-            
+
             return clicked;
         }
 
@@ -528,14 +528,14 @@ namespace KrxSlaxy {
             Style& style = Style::Get();
             float availableWidth = s.windowSize.x - style.panelPadding * 3;
             float availableHeight = s.windowSize.y - style.headerHeight - style.footerHeight - style.panelPadding * 2;
-            
+
             float groupWidth = availableWidth * widthPercent;
             float groupHeight = heightPercent > 0 ? availableHeight * heightPercent : availableHeight;
-            
+
             s_LayoutState.groupWidth = groupWidth;
             s_LayoutState.groupHeight = groupHeight;
             s_LayoutState.groupStartPos = s.cursorPos;
-            
+
             ImVec2 groupMin = s.cursorPos;
             ImVec2 groupMax(groupMin.x + groupWidth, groupMin.y + groupHeight);
             dl->AddRectFilled(groupMin, groupMax, Colors::PanelBg(), style.panelRounding);
@@ -564,11 +564,11 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             s_LayoutState.groupWidth = width;
             s_LayoutState.groupHeight = height;
             s_LayoutState.groupStartPos = s.cursorPos;
-            
+
             ImVec2 groupMin = s.cursorPos;
             ImVec2 groupMax(groupMin.x + width, groupMin.y + height);
             dl->AddRectFilled(groupMin, groupMax, Colors::PanelBg(), style.panelRounding);
@@ -595,7 +595,7 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float itemHeight = style.toggleHeight;
             const float toggleSize = style.toggleBoxSize;
             const float gearSize = style.gearIconSize;
@@ -608,7 +608,7 @@ namespace KrxSlaxy {
             if (s_LayoutState.groupContentY > s_LayoutState.groupStartPos.y + s_LayoutState.groupHeight - padding) {
                 return false;
             }
-            
+
             bool isHovered = ImGui::IsMouseHoveringRect(itemMin, itemMax);
             bool clicked = false;
             bool valueChanged = false;
@@ -630,9 +630,9 @@ namespace KrxSlaxy {
             if (colorPtr) {
                 colorPreviewPos = ImVec2(rightX - colorWidth, itemMin.y + (itemHeight - colorHeight) * 0.5f);
                 rightX -= colorWidth + 6.0f;
-                
+
                 colorHovered = ImGui::IsMouseHoveringRect(colorPreviewPos, ImVec2(colorPreviewPos.x + colorWidth, colorPreviewPos.y + colorHeight));
-                
+
                 DrawColorPreview(dl, colorPreviewPos, colorWidth, colorHeight, colorPtr);
                 if (colorHovered && ImGui::IsMouseClicked(0) && !g_Config.dropdownConsumedClick && !g_Config.IsPopupBlocking()) {
                     g_Config.showColorPicker = true;
@@ -644,7 +644,7 @@ namespace KrxSlaxy {
             ImVec2 togglePos(rightX - toggleSize, itemMin.y + (itemHeight - toggleSize) * 0.5f);
             ImVec2 toggleEnd(togglePos.x + toggleSize, togglePos.y + toggleSize);
             rightX -= toggleSize + 6.0f;
-            
+
             bool toggleHovered = ImGui::IsMouseHoveringRect(togglePos, toggleEnd);
             static std::map<std::string, float> s_checkboxAnim;
             float targetCheckAnim = *v ? 1.0f : 0.0f;
@@ -653,7 +653,7 @@ namespace KrxSlaxy {
             ImU32 toggleOffColor = toggleHovered ? Colors::WithAlpha(Colors::ToggleOff(), 200) : Colors::ToggleOff();
             ImU32 toggleOnColor = toggleHovered ? Colors::AccentHover() : Colors::ToggleOn();
             ImU32 toggleBgColor = Colors::LerpColor(toggleOffColor, toggleOnColor, checkAnim);
-            
+
             dl->AddRectFilled(togglePos, toggleEnd, toggleBgColor, 0.0f);
             dl->AddRect(togglePos, toggleEnd, Colors::Border(), 0.0f, 0, 1.0f);
             if (checkAnim > 0.01f) {
@@ -676,7 +676,7 @@ namespace KrxSlaxy {
                 ImVec2 gearMin(rightX - gearSize, itemMin.y + (itemHeight - gearSize) * 0.5f);
                 ImVec2 gearMax(gearMin.x + gearSize, gearMin.y + gearSize);
                 rightX -= gearSize + 6.0f;
-                
+
                 gearHovered = ImGui::IsMouseHoveringRect(gearMin, gearMax);
                 bool hasKey = (g_Config.keybinds.find(label) != g_Config.keybinds.end() && g_Config.keybinds[label].key != 0);
                 ImU32 gearColor = hasKey ? (gearHovered ? Colors::AccentHover() : Colors::Accent()) : (gearHovered ? Colors::GearIconHover() : Colors::GearIcon());
@@ -701,7 +701,7 @@ namespace KrxSlaxy {
             if (hoverAnim > 0.5f) {
                 textColor = Colors::TextActive();
             }
-            
+
             float slideOffset = 3.0f * hoverAnim;
             ImVec2 textPos(itemMin.x + padding + slideOffset, itemMin.y + (itemHeight - g_TextFont.size) * 0.5f);
             g_TextRenderer.RenderText(dl, textPos, lowerLabel, textColor, g_TextFont);
@@ -709,7 +709,7 @@ namespace KrxSlaxy {
                 *v = !*v;
                 valueChanged = true;
             }
-            
+
             return valueChanged;
         }
 
@@ -717,7 +717,7 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float itemHeight = 28.0f;
             const float padding = 8.0f;
             ImVec2 itemMin(s.currentGroupX + padding, s_LayoutState.groupContentY);
@@ -726,13 +726,13 @@ namespace KrxSlaxy {
             if (s_LayoutState.groupContentY > s_LayoutState.groupStartPos.y + s_LayoutState.groupHeight - padding) {
                 return false;
             }
-            
+
             bool isHovered = ImGui::IsMouseHoveringRect(itemMin, itemMax);
             bool isPressed = isHovered && ImGui::IsMouseDown(0);
             bool clicked = false;
             static std::map<std::string, float> s_buttonHoverAnim;
             static std::map<std::string, float> s_buttonPressAnim;
-            
+
             float targetHover = isHovered ? 1.0f : 0.0f;
             float targetPress = isPressed ? 1.0f : 0.0f;
             float& hoverAnim = s_buttonHoverAnim[label];
@@ -746,7 +746,7 @@ namespace KrxSlaxy {
                 }
             }
             ImU32 bgColor = Colors::LerpColor(
-                Colors::LerpColor(IM_COL32(30, 30, 30, (int)(255 * Colors::GlobalAlpha())), 
+                Colors::LerpColor(IM_COL32(30, 30, 30, (int)(255 * Colors::GlobalAlpha())),
                                   IM_COL32(40, 40, 40, (int)(255 * Colors::GlobalAlpha())), hoverAnim),
                 IM_COL32(25, 25, 25, (int)(255 * Colors::GlobalAlpha())), pressAnim
             );
@@ -763,7 +763,7 @@ namespace KrxSlaxy {
             if (isHovered && ImGui::IsMouseClicked(0) && !g_Config.dropdownConsumedClick && !g_Config.IsPopupBlocking()) {
                 clicked = true;
             }
-            
+
             return clicked;
         }
 
@@ -772,7 +772,7 @@ namespace KrxSlaxy {
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
             ImGuiIO& io = ImGui::GetIO();
-            
+
             const float itemHeight = 28.0f;
             const float padding = 8.0f;
             const float inputWidth = 120.0f;
@@ -787,7 +787,7 @@ namespace KrxSlaxy {
             float inputY = itemMin.y + (itemHeight - inputHeight) * 0.5f;
             ImVec2 inputMin(inputX, inputY);
             ImVec2 inputMax(inputX + inputWidth, inputY + inputHeight);
-            
+
             bool isHovered = ImGui::IsMouseHoveringRect(itemMin, itemMax);
             bool inputHovered = ImGui::IsMouseHoveringRect(inputMin, inputMax);
             bool valueChanged = false;
@@ -796,7 +796,7 @@ namespace KrxSlaxy {
             static std::map<std::string, int> s_cursorPos;
             static std::map<std::string, int> s_selectionStart;
             static std::map<std::string, bool> s_isDragging;
-            
+
             bool& isFocused = s_inputFocused[label];
             float& cursorBlink = s_cursorBlink[label];
             int& cursorPos = s_cursorPos[label];
@@ -804,7 +804,7 @@ namespace KrxSlaxy {
             bool& isDragging = s_isDragging[label];
             static std::map<std::string, float> s_inputHoverAnim;
             static std::map<std::string, float> s_inputFocusAnim;
-            
+
             float targetHover = (isHovered || inputHovered) ? 1.0f : 0.0f;
             float targetFocus = isFocused ? 1.0f : 0.0f;
             float& hoverAnim = s_inputHoverAnim[label];
@@ -880,7 +880,7 @@ namespace KrxSlaxy {
             if (isFocused) {
                 cursorBlink += io.DeltaTime;
                 if (cursorBlink > 1.0f) cursorBlink = 0.0f;
-                
+
                 int len = (int)strlen(buffer);
                 bool ctrlHeld = io.KeyCtrl;
                 bool shiftHeld = io.KeyShift;
@@ -983,7 +983,7 @@ namespace KrxSlaxy {
                 hoverAnim
             );
             ImU32 inputBorder = Colors::LerpColor(Colors::Border(), Colors::Accent(), focusAnim * 0.7f);
-            
+
             dl->AddRectFilled(inputMin, inputMax, inputBg, 3.0f);
             dl->AddRect(inputMin, inputMax, inputBorder, 3.0f);
             dl->PushClipRect(ImVec2(inputMin.x + textPadding, inputMin.y), ImVec2(inputMax.x - textPadding, inputMax.y), true);
@@ -993,7 +993,7 @@ namespace KrxSlaxy {
                 std::string beforeEnd(buffer, end);
                 ImVec2 startSize = g_TextRenderer.MeasureText(beforeStart, g_TextFont);
                 ImVec2 endSize = g_TextRenderer.MeasureText(beforeEnd, g_TextFont);
-                
+
                 ImU32 selectionColor = IM_COL32(114, 137, 218, (int)(100 * Colors::GlobalAlpha()));
                 dl->AddRectFilled(
                     ImVec2(textStart.x + startSize.x, inputMin.y + 2),
@@ -1016,9 +1016,9 @@ namespace KrxSlaxy {
                     Colors::TextActive(), 1.0f
                 );
             }
-            
+
             dl->PopClipRect();
-            
+
             return valueChanged;
         }
 
@@ -1026,18 +1026,18 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float itemHeight = style.toggleHeight;
             const float padding = 8.0f;
             const float sliderHeight = 4.0f;
             const float knobRadius = 5.0f;
             const float sliderWidth = 120.0f;
-            
+
             ImVec2 itemMin(s.currentGroupX + padding, s_LayoutState.groupContentY);
             ImVec2 itemMax(s.currentGroupX + s_LayoutState.groupWidth - padding, itemMin.y + itemHeight);
-            
+
             s_LayoutState.groupContentY = itemMax.y + 2.0f;
-            
+
             bool isHovered = ImGui::IsMouseHoveringRect(itemMin, itemMax);
             bool valueChanged = false;
             static std::map<std::string, float> s_sliderHoverAnim;
@@ -1118,13 +1118,13 @@ namespace KrxSlaxy {
                     break;
                 }
             }
-            
+
             ImVec2 valueSize = g_TextRenderer.MeasureText(cleanValue, g_TextFont);
             float valueBoxWidth = 50.0f;
             float valueBoxHeight = 18.0f;
             ImVec2 valueBoxMin(sliderMin.x - valueBoxWidth - 10.0f, itemMin.y + (itemHeight - valueBoxHeight) * 0.5f);
             ImVec2 valueBoxMax(valueBoxMin.x + valueBoxWidth, valueBoxMin.y + valueBoxHeight);
-            
+
             bool valueHovered = ImGui::IsMouseHoveringRect(valueBoxMin, valueBoxMax);
             float targetEditAnim = (isEditing && s_activeSliderEdit == label) ? 1.0f : 0.0f;
             editAnim = ImLerp(editAnim, targetEditAnim, ImGui::GetIO().DeltaTime * 15.0f);
@@ -1141,14 +1141,14 @@ namespace KrxSlaxy {
                 Colors::Accent(),
                 editAnim
             );
-            
+
             if (editAnim > 0.01f) {
                 dl->AddRectFilled(animBoxMin, animBoxMax, boxBg, 2.0f + editAnim);
                 dl->AddRect(animBoxMin, animBoxMax, boxBorder, 2.0f + editAnim);
             } else if (valueHoverAnim > 0.01f) {
                 dl->AddRect(valueBoxMin, valueBoxMax, Colors::WithAlpha(Colors::Border(), valueHoverAnim * 0.3f), 2.0f);
             }
-            
+
             if (isEditing && s_activeSliderEdit == label) {
                 char* editBuffer = s_sliderEditBuffer[label];
                 ImGuiIO& io = ImGui::GetIO();
@@ -1221,8 +1221,8 @@ namespace KrxSlaxy {
                 std::string editStr = editBuffer;
                 ImVec2 editSize = g_TextRenderer.MeasureText(editStr, g_TextFont);
                 float typeBounce = sinf(typeAnim * 3.14159f) * 2.0f;
-                
-                ImVec2 editPos(animBoxMin.x + ((animBoxMax.x - animBoxMin.x) - editSize.x) * 0.5f, 
+
+                ImVec2 editPos(animBoxMin.x + ((animBoxMax.x - animBoxMin.x) - editSize.x) * 0.5f,
                               animBoxMin.y + ((animBoxMax.y - animBoxMin.y) - g_TextFont.size) * 0.5f - typeBounce);
                 if (selectAnim > 0.01f && strlen(editBuffer) > 0) {
                     float selectWidth = editSize.x * selectAnim;
@@ -1255,7 +1255,7 @@ namespace KrxSlaxy {
             if (!isEditing && sliderHovered && ImGui::IsMouseClicked(0) && !g_Config.IsPopupBlocking()) {
                 isDragging = true;
             }
-            
+
             if (isDragging) {
                 if (ImGui::IsMouseDown(0)) {
                     float mouseX = ImGui::GetIO().MousePos.x;
@@ -1270,7 +1270,7 @@ namespace KrxSlaxy {
                     isDragging = false;
                 }
             }
-            
+
             return valueChanged;
         }
 
@@ -1278,15 +1278,15 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float itemHeight = style.toggleHeight;
             const float padding = 8.0f;
-            
+
             ImVec2 itemMin(s.currentGroupX + padding, s_LayoutState.groupContentY);
             ImVec2 itemMax(s.currentGroupX + s_LayoutState.groupWidth - padding, itemMin.y + itemHeight);
-            
+
             s_LayoutState.groupContentY = itemMax.y + 2.0f;
-            
+
             bool isHovered = ImGui::IsMouseHoveringRect(itemMin, itemMax);
             static std::map<std::string, float> s_dropdownHoverAnim;
             float targetAnim = isHovered ? 1.0f : 0.0f;
@@ -1315,12 +1315,12 @@ namespace KrxSlaxy {
                 ImVec2(arrowCenter.x, arrowCenter.y + arrowSize * 0.5f),
                 Colors::TextInactive()
             );
-            
+
             if (isHovered && ImGui::IsMouseClicked(0) && !g_Config.IsPopupBlocking()) {
                 *open = !*open;
                 return true;
             }
-            
+
             return false;
         }
 
@@ -1328,7 +1328,7 @@ namespace KrxSlaxy {
             State& s = State::Get();
             ImDrawList* dl = s.drawList;
             Style& style = Style::Get();
-            
+
             const float itemHeight = style.toggleHeight;
             const float padding = 8.0f;
             struct FlagOption {
@@ -1363,12 +1363,12 @@ namespace KrxSlaxy {
                 snprintf(buf, sizeof(buf), "%d selected", selectedCount);
                 preview = buf;
             }
-            
+
             ImVec2 itemMin(s.currentGroupX + padding, s_LayoutState.groupContentY);
             ImVec2 itemMax(s.currentGroupX + s_LayoutState.groupWidth - padding, itemMin.y + itemHeight);
-            
+
             s_LayoutState.groupContentY = itemMax.y + 2.0f;
-            
+
             bool isHovered = ImGui::IsMouseHoveringRect(itemMin, itemMax);
             bool valueChanged = false;
             static std::map<std::string, float> s_multiSelectHoverAnim;
@@ -1417,7 +1417,7 @@ namespace KrxSlaxy {
             expandAnim = ImLerp(expandAnim, targetExpandAnim, ImGui::GetIO().DeltaTime * 12.0f);
             if (expandAnim > 0.01f) {
                 g_Config.anyDropdownOpen = true;
-                
+
                 std::string posKey = label;
                 bool wasOpenLastFrame = s_wasOpen[posKey];
                 if (*open && !wasOpenLastFrame) {
@@ -1508,7 +1508,7 @@ namespace KrxSlaxy {
             if (!*open && expandAnim < 0.01f) {
                 s_wasOpen[label] = false;
             }
-            
+
             return valueChanged;
         }
 
@@ -1547,7 +1547,7 @@ namespace KrxSlaxy {
             ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.447f, 0.537f, 0.855f, 0.4f));
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.447f, 0.537f, 0.855f, 0.6f));
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.447f, 0.537f, 0.855f, 0.8f));
-            
+
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14, 14));
             ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
@@ -1556,16 +1556,16 @@ namespace KrxSlaxy {
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 6));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 8));
             ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, 16.0f);
-            
+
             bool isPickerHovered = false;
             bool isPickerItemActive = false;
-            
-            if (ImGui::Begin("##ColorPicker", &g_Config.showColorPicker, 
-                ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | 
+
+            if (ImGui::Begin("##ColorPicker", &g_Config.showColorPicker,
+                ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
                 ImGuiWindowFlags_AlwaysAutoResize)) {
                 ImGui::SetNextItemWidth(200.0f);
-                ImGui::ColorPicker4("##picker", colorPtr, 
+                ImGui::ColorPicker4("##picker", colorPtr,
                     ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview |
                     ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_PickerHueBar |
                     ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoInputs |
@@ -1574,7 +1574,7 @@ namespace KrxSlaxy {
                 isPickerItemActive = ImGui::IsAnyItemActive();
             }
             ImGui::End();
-            
+
             ImGui::PopStyleVar(9);
             ImGui::PopStyleColor(16);
             bool justOpened = (ImGui::GetFrameCount() - g_Config.colorPickerOpenFrame) < 2;
@@ -1601,7 +1601,7 @@ namespace KrxSlaxy {
             if (g_Config.keybindPopupAnim > 0.01f) {
                 ImGui::SetNextWindowFocus();
             }
-            
+
             static bool s_typeDropdownOpen = false;
             static int s_dropdownOpenFrame = -1;
             static ImVec2 s_dropdownButtonPos;
@@ -1622,16 +1622,16 @@ namespace KrxSlaxy {
             ImGui::PushStyleColor(ImGuiCol_Header, Colors::ToVec4(Colors::WithAlpha(Colors::AccentDim(), 0.5f * alpha)));
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Colors::ToVec4(Colors::WithAlpha(Colors::AccentDim(), 0.8f * alpha)));
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, Colors::ToVec4(Colors::WithAlpha(Colors::Accent(), alpha)));
-            
+
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14, 14));
             ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 6));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 8));
-            
+
             bool isPopupHovered = false;
-            
+
             if (ImGui::Begin("##KeybindPopup", &g_Config.showKeybindPopup,
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
@@ -1664,7 +1664,7 @@ namespace KrxSlaxy {
                         for (int vk = 0x08; vk <= 0xFE; vk++) {
                             if (vk >= VK_LBUTTON && vk <= VK_XBUTTON2) continue;
                             if (vk == VK_LWIN || vk == VK_RWIN) continue;
-                            
+
                             if (GetAsyncKeyState(vk) & 0x8000) {
                                 if (vk == VK_ESCAPE) {
                                     kb.key = 0;
@@ -1681,11 +1681,11 @@ namespace KrxSlaxy {
                 ImGui::SameLine(100.0f);
                 const float dropdownWidth = 120.0f;
                 const float dropdownHeight = 24.0f;
-                
+
                 ImVec2 typeButtonPos = ImGui::GetCursorScreenPos();
                 ImVec2 typeButtonMin = typeButtonPos;
                 ImVec2 typeButtonMax(typeButtonMin.x + dropdownWidth, typeButtonMin.y + dropdownHeight);
-                
+
                 ImDrawList* dl = ImGui::GetWindowDrawList();
                 bool typeButtonHovered = ImGui::IsMouseHoveringRect(typeButtonMin, typeButtonMax);
                 ImU32 buttonBg = typeButtonHovered ? Colors::WithAlpha(Colors::PanelHeader(), alpha) : Colors::WithAlpha(Colors::ToggleOff(), alpha);
@@ -1721,21 +1721,21 @@ namespace KrxSlaxy {
                 }
                 s_dropdownButtonPos = ImVec2(typeButtonMin.x, typeButtonMax.y + 2.0f);
                 ImGui::Dummy(ImVec2(dropdownWidth, dropdownHeight));
-                
-                isPopupHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem | 
-                                                        ImGuiHoveredFlags_ChildWindows | 
+
+                isPopupHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem |
+                                                        ImGuiHoveredFlags_ChildWindows |
                                                         ImGuiHoveredFlags_AllowWhenBlockedByPopup);
-                
+
             }
             ImGui::End();
-            
+
             ImGui::PopStyleVar(7);
             ImGui::PopStyleColor(13);
             bool dropdownHovered = false;
             static float s_typeDropdownExpandAnim = 0.0f;
             float targetDropdownAnim = s_typeDropdownOpen ? 1.0f : 0.0f;
             s_typeDropdownExpandAnim = ImLerp(s_typeDropdownExpandAnim, targetDropdownAnim, ImGui::GetIO().DeltaTime * 12.0f);
-            
+
             if (s_typeDropdownExpandAnim > 0.01f && alpha > 0.01f) {
                 ImDrawList* fgDl = ImGui::GetForegroundDrawList();
                 const float optionHeight = 24.0f;
@@ -1750,11 +1750,11 @@ namespace KrxSlaxy {
                 ImU32 dropdownBorder = Colors::WithAlpha(Colors::Border(), dropdownAlpha);
                 fgDl->AddRectFilled(dropdownMin, dropdownMax, dropdownBg, 3.0f);
                 fgDl->AddRect(dropdownMin, dropdownMax, dropdownBorder, 3.0f);
-                
+
                 const char* typeNames[] = { "Hold", "Toggle", "Always" };
                 KeybindType types[] = { KeybindType::Hold, KeybindType::Toggle, KeybindType::Always };
                 Keybind& kb = g_Config.keybinds[useLabel];
-                
+
                 for (int i = 0; i < numOptions; i++) {
                     ImVec2 optMin(dropdownMin.x + 2.0f, dropdownMin.y + 2.0f + i * optionHeight);
                     ImVec2 optMax(dropdownMax.x - 2.0f, optMin.y + optionHeight);
@@ -1764,7 +1764,7 @@ namespace KrxSlaxy {
                         optionVisibility = ImClamp(visiblePortion, 0.0f, 1.0f);
                     }
                     float optAlpha = dropdownAlpha * optionVisibility;
-                    
+
                     if (optAlpha < 0.01f) continue;
                     bool optHovered = ImGui::IsMouseHoveringRect(optMin, optMax, false);
                     bool isSelected = kb.type == types[i];
@@ -1772,7 +1772,7 @@ namespace KrxSlaxy {
                     float targetAnim = optHovered ? 1.0f : 0.0f;
                     float& currentAnim = s_hoverAnim[i];
                     currentAnim = ImLerp(currentAnim, targetAnim, ImGui::GetIO().DeltaTime * 10.0f);
-                    
+
                     if (optHovered) dropdownHovered = true;
                     if (currentAnim > 0.01f) {
                         fgDl->AddRectFilled(optMin, optMax, Colors::WithAlpha(Colors::Accent(), 0.15f * currentAnim * optAlpha), 2.0f);
@@ -1840,7 +1840,7 @@ namespace KrxSlaxy {
             g_Config.menuOpenAnim = 1.0f;
             g_Config.menuOpen = true;
             Colors::GlobalAlpha() = 1.0f;
-            
+
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
@@ -1848,7 +1848,7 @@ namespace KrxSlaxy {
             ImGui::PushStyleColor(ImGuiCol_WindowBg, Colors::ToVec4(Colors::BackgroundDark()));
             ImGui::PushStyleColor(ImGuiCol_Border, Colors::ToVec4(Colors::Border()));
             ImGui::Begin("##KrxSlaxyMenu", nullptr,
-                ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | 
+                ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
                 ImGuiWindowFlags_NoCollapse |
                 ((g_Config.showColorPicker || g_Config.showKeybindPopup) ? ImGuiWindowFlags_NoBringToFrontOnFocus : 0) |
@@ -1859,7 +1859,7 @@ namespace KrxSlaxy {
                 ImDrawList* bgDl = bgState.drawList;
                 ImVec2 bgMin = bgState.windowPos;
                 ImVec2 bgMax(bgMin.x + bgState.windowSize.x, bgMin.y + bgState.windowSize.y);
-                
+
                 bgDl->AddRectFilled(bgMin, bgMax, Colors::BackgroundDark(), 8.0f);
             }
             RenderHeader("krxslaxy");
@@ -1885,7 +1885,7 @@ namespace KrxSlaxy {
                 float rightColumnX = leftColumnX + columnWidth + style.panelPadding;
                 s.cursorPos = ImVec2(leftColumnX, contentStartY);
                 BeginGroupFixed("aimbot", columnWidth, contentHeight);
-                
+
                 Toggle("enabled", &g_Config.aimbot.enabled, true, nullptr);
                 Toggle("visibility check", &g_Config.aimbot.visibilityCheck, false, nullptr);
                 Toggle("auto fire", &g_Config.aimbot.autoFire, false, nullptr);
@@ -1903,11 +1903,11 @@ namespace KrxSlaxy {
                 Slider("smooth", &g_Config.aimbot.smooth, 1.0f, 100.0f, "%.1f");
                 Slider("hitchance", &g_Config.aimbot.hitchance, 0.0f, 100.0f, "%.0f%%");
                 Slider("min damage", &g_Config.aimbot.minDamage, 0.0f, 100.0f, "%.0f");
-                
+
                 EndGroup();
                 s.cursorPos = ImVec2(rightColumnX, contentStartY);
                 BeginGroupFixed("anti aim", columnWidth, contentHeight);
-                
+
                 Toggle("enable anti-aim", &g_Config.antiAim.enableAntiAim, false, nullptr);
                 Toggle("server anti-aim", &g_Config.antiAim.serverAntiAim, false, nullptr);
                 Toggle("fast duck", &g_Config.antiAim.fastDuck, false, nullptr);
@@ -1930,7 +1930,7 @@ namespace KrxSlaxy {
                     Slider("center speed", &g_Config.antiAim.centerSpeed, 0.1f, 3.0f, "%.2f");
                 }
                 Toggle("prediction resolver", &g_Config.antiAim.predictionResolver, false, nullptr);
-                
+
                 EndGroup();
             }
             else if (g_Config.activeMainTab == 1) {
@@ -1944,7 +1944,7 @@ namespace KrxSlaxy {
                 s_LayoutState.groupWidth = columnWidth;
                 Config::ESPTarget& esp = g_Config.espTargets[0];
                 BeginGroupFixed("esp features", columnWidth, availableHeight);
-                
+
                 Toggle("enabled", &esp.enabled, false, nullptr);
                 Toggle("only visible", &esp.onlyVisible, false, nullptr);
                 Toggle("only audible", &esp.onlyAudible, false, nullptr);
@@ -1957,32 +1957,32 @@ namespace KrxSlaxy {
                 Toggle("weapon icon", &esp.weaponIcon, false, esp.weaponIconColor);
                 static bool flagsOpen[3] = {false, false, false};
                 MultiSelectDropdown("flags", &esp.flagsSelection, &flagsOpen[g_Config.activeSubTab]);
-                
+
                 Toggle("grenades", &esp.grenades, false, esp.grenadesColor);
                 Toggle("skeleton", &esp.skeleton, false, esp.skeletonColor);
                 Toggle("line of sight", &esp.lineOfSight, false, esp.lineOfSightColor);
                 Toggle("sounds", &esp.sounds, false, esp.soundsColor);
-                
+
                 EndGroup();
                 float chamsHeight = availableHeight * 0.55f;
                 float otherHeight = availableHeight * 0.45f - style.panelPadding;
-                
+
                 s.cursorPos = ImVec2(rightColumnX, contentStartY);
                 BeginGroupFixed("chams", columnWidth, chamsHeight);
-                
+
                 Toggle("visible chams", &g_Config.chams.visibleChams, false, g_Config.chams.visibleColor);
                 Toggle("invisible chams", &g_Config.chams.invisibleChams, false, g_Config.chams.invisibleColor);
                 Toggle("overlay chams", &g_Config.chams.overlayChams, false, g_Config.chams.overlayColor);
                 Toggle("backtrack chams", &g_Config.chams.backtrackChams, false, g_Config.chams.backtrackColor);
                 Toggle("disable occlusion", &g_Config.chams.disableOcclusion, false, nullptr);
-                
+
                 EndGroup();
                 s.cursorPos = ImVec2(rightColumnX, contentStartY + chamsHeight + style.panelPadding);
                 BeginGroupFixed("other", columnWidth, otherHeight);
-                
+
                 Toggle("glow", &g_Config.other.glow, false, nullptr);
                 Toggle("offscreen arrows", &g_Config.other.offscreenArrows, false, g_Config.other.offscreenArrowsColor);
-                
+
                 EndGroup();
             }
             else if (g_Config.activeMainTab == 2) {
@@ -1991,13 +1991,13 @@ namespace KrxSlaxy {
                 float columnWidth = availableWidth * 0.5f;
                 float leftColumnX = s.windowPos.x + style.panelPadding + tabSlideOffset;
                 float rightColumnX = leftColumnX + columnWidth + style.panelPadding;
-                
+
                 float movementHeight = contentHeight * 0.65f;
                 float otherHeight = contentHeight - movementHeight - style.panelPadding;
-                
+
                 s.cursorPos = ImVec2(leftColumnX, contentStartY);
                 BeginGroupFixed("movement", columnWidth, movementHeight);
-                
+
                 Toggle("bunny hop", &g_Config.misc.bunnyHop, false, nullptr);
                 Toggle("auto strafe", &g_Config.misc.autoStrafe, true, nullptr);
                 Toggle("air strafe", &g_Config.misc.airStrafe, true, nullptr);
@@ -2006,38 +2006,38 @@ namespace KrxSlaxy {
                 Toggle("fast stop", &g_Config.misc.fastStop, true, nullptr);
                 Toggle("quick stop", &g_Config.misc.quickStop, true, nullptr);
                 Toggle("fake lag", &g_Config.misc.fakelag, false, nullptr);
-                
+
                 EndGroup();
-                
+
                 s.cursorPos = ImVec2(leftColumnX, contentStartY + movementHeight + style.panelPadding);
                 BeginGroupFixed("other", columnWidth, otherHeight);
-                
+
                 Toggle("resolver", &g_Config.misc.resolver, false, nullptr);
                 Toggle("lag compensation", &g_Config.misc.lagCompensation, false, nullptr);
-                
+
                 EndGroup();
-                
+
                 float changerHeight = 115.0f;
                 float featuresHeight = contentHeight - changerHeight - style.panelPadding;
-                
+
                 s.cursorPos = ImVec2(rightColumnX, contentStartY);
                 BeginGroupFixed("models / changer", columnWidth, changerHeight);
-                
+
                 Toggle("skin changer", &g_Config.changer.skinChanger, false, nullptr);
                 Toggle("agent changer", &g_Config.changer.agentChanger, false, nullptr);
-                
+
                 EndGroup();
-                
+
                 s.cursorPos = ImVec2(rightColumnX, contentStartY + changerHeight + style.panelPadding);
                 BeginGroupFixed("features", columnWidth, featuresHeight);
-                
+
                 Toggle("reveal ranks", &g_Config.misc.revealRanks, false, nullptr);
                 Toggle("auto accept", &g_Config.misc.autoAccept, false, nullptr);
                 Toggle("clantag", &g_Config.misc.clantag, true, nullptr);
                 TextInput("clantag text", g_Config.misc.clantagText, sizeof(g_Config.misc.clantagText));
                 Toggle("hit sound", &g_Config.misc.hitSound, true, nullptr);
                 Toggle("kill sound", &g_Config.misc.killSound, true, nullptr);
-                
+
                 EndGroup();
             }
             else if (g_Config.activeMainTab == 3) {
@@ -2047,13 +2047,13 @@ namespace KrxSlaxy {
                 float columnWidth = availableWidth * 0.5f;
                 float leftColumnX = s.windowPos.x + style.panelPadding + tabSlideOffset;
                 float rightColumnX = leftColumnX + columnWidth + style.panelPadding;
-                
+
                 float managerHeight = 210.0f;
                 float settingsHeight = contentHeight - managerHeight - style.panelPadding;
-                
+
                 s.cursorPos = ImVec2(leftColumnX, contentStartY);
                 BeginGroupFixed("profile manager", columnWidth, managerHeight);
-                
+
                 TextInput("config name", g_Config.configTab.newProfileName, sizeof(g_Config.configTab.newProfileName));
                 if (Button("create profile")) {
                     if (strlen(g_Config.configTab.newProfileName) > 0) {
@@ -2071,12 +2071,12 @@ namespace KrxSlaxy {
                 if (Button("reset to defaults")) {
                     g_Config.configTab.statusMessage = "Settings reset to defaults";
                 }
-                
+
                 EndGroup();
-                
+
                 s.cursorPos = ImVec2(leftColumnX, contentStartY + managerHeight + style.panelPadding);
                 BeginGroupFixed("menu settings", columnWidth, settingsHeight);
-                
+
                 Toggle("watermark", &g_Config.configTab.watermark, false, nullptr);
                 Toggle("stream proof", &g_Config.configTab.streamProof, false, nullptr);
                 Toggle("particle effects", &g_Config.configTab.particleEffects, false, nullptr);
@@ -2084,17 +2084,17 @@ namespace KrxSlaxy {
                 if (Button("eject menu")) {
                     ::PostQuitMessage(0);
                 }
-                
+
                 EndGroup();
-                
+
                 s.cursorPos = ImVec2(rightColumnX, contentStartY);
                 BeginGroupFixed("saved profiles", columnWidth, contentHeight);
-                
+
                 int profileToDelete = -1;
                 for (int i = 0; i < (int)g_Config.configTab.profiles.size(); i++) {
                     const char* profName = g_Config.configTab.profiles[i].c_str();
                     bool isSelected = (g_Config.configTab.selectedProfile == i);
-                    
+
                     const float itemHeight = 52.0f;
                     const float cardPad = 8.0f;
                     ImVec2 itemMin(s.currentGroupX + cardPad, s_LayoutState.groupContentY);
@@ -2106,85 +2106,85 @@ namespace KrxSlaxy {
                             g_Config.blockWindowDrag = true;
                             if (ImGui::IsMouseDown(0)) g_Config.interactiveMouseDown = true;
                         }
-                        
+
                         ImU32 cardBg = isSelected ? Colors::WithAlpha(Colors::AccentDim(), 0.30f) : (isCardHovered ? Colors::PanelHeader() : Colors::PanelBg());
                         ImU32 cardBorder = isSelected ? Colors::Accent() : (isCardHovered ? Colors::AccentHover() : Colors::Border());
-                        
+
                         dl->AddRectFilled(itemMin, itemMax, cardBg, 4.0f);
                         dl->AddRect(itemMin, itemMax, cardBorder, 4.0f, 0, isSelected ? 1.5f : 1.0f);
-                        
+
                         if (isSelected) {
                             dl->AddRectFilled(ImVec2(itemMin.x, itemMin.y + 8.0f), ImVec2(itemMin.x + 3.5f, itemMax.y - 8.0f), Colors::Accent(), 2.0f);
                         }
-                        
+
                         float badgeSize = 34.0f;
                         ImVec2 badgeMin(itemMin.x + (isSelected ? 14.0f : 10.0f), itemMin.y + (itemHeight - badgeSize) * 0.5f);
                         ImVec2 badgeMax(badgeMin.x + badgeSize, badgeMin.y + badgeSize);
                         dl->AddRectFilled(badgeMin, badgeMax, Colors::BackgroundDark(), 3.0f);
                         dl->AddRect(badgeMin, badgeMax, isSelected ? Colors::Accent() : Colors::Border(), 3.0f, 0, 1.0f);
-                        
+
                         TextFont badgeFont = g_TextFont;
                         badgeFont.size = 11;
                         badgeFont.weight = FW_BOLD;
                         ImVec2 cfgSize = g_TextRenderer.MeasureText("CFG", badgeFont);
                         ImVec2 cfgPos(badgeMin.x + (badgeSize - cfgSize.x) * 0.5f, badgeMin.y + (badgeSize - cfgSize.y) * 0.5f);
                         g_TextRenderer.RenderText(dl, cfgPos, "CFG", isSelected ? Colors::AccentHover() : Colors::TextDim(), badgeFont);
-                        
+
                         float textStartX = badgeMax.x + 10.0f;
                         TextFont titleFont = g_TextFont;
                         titleFont.weight = FW_BOLD;
                         titleFont.size = 13;
                         ImVec2 titlePos(textStartX, itemMin.y + 9.0f);
                         g_TextRenderer.RenderText(dl, titlePos, profName, isSelected ? Colors::TextActive() : Colors::TextInactive(), titleFont);
-                        
+
                         ImVec2 dotCenter(textStartX + 3.0f, itemMin.y + 34.0f);
                         dl->AddCircleFilled(dotCenter, 3.0f, isSelected ? Colors::Accent() : Colors::TextDim());
-                        
+
                         TextFont statusFont = g_TextFont;
                         statusFont.size = 11;
                         statusFont.weight = FW_NORMAL;
                         ImVec2 statusPos(textStartX + 10.0f, itemMin.y + 28.0f);
                         g_TextRenderer.RenderText(dl, statusPos, isSelected ? "Active Profile" : "Ready to load", isSelected ? Colors::AccentHover() : Colors::TextDim(), statusFont);
-                        
+
                         float btnY = itemMin.y + (itemHeight - 24.0f) * 0.5f;
                         float btnH = 24.0f;
-                        
+
                         float loadW = 48.0f;
                         ImVec2 loadMin(itemMax.x - loadW - 8.0f, btnY);
                         ImVec2 loadMax(loadMin.x + loadW, btnY + btnH);
                         bool loadHover = ImGui::IsMouseHoveringRect(loadMin, loadMax);
-                        
+
                         float saveW = 44.0f;
                         ImVec2 saveMin(loadMin.x - saveW - 6.0f, btnY);
                         ImVec2 saveMax(saveMin.x + saveW, btnY + btnH);
                         bool saveHover = ImGui::IsMouseHoveringRect(saveMin, saveMax);
-                        
+
                         float delW = 26.0f;
                         ImVec2 delMin(saveMin.x - delW - 6.0f, btnY);
                         ImVec2 delMax(delMin.x + delW, btnY + btnH);
                         bool delHover = ImGui::IsMouseHoveringRect(delMin, delMax);
-                        
+
                         TextFont btnFont = g_TextFont;
                         btnFont.size = 11;
                         btnFont.weight = FW_BOLD;
-                        
+
                         dl->AddRectFilled(delMin, delMax, delHover ? IM_COL32(239, 68, 68, 50) : Colors::BackgroundDark(), 3.0f);
                         dl->AddRect(delMin, delMax, delHover ? Colors::Red() : Colors::Border(), 3.0f, 0, 1.0f);
                         ImVec2 xSize = g_TextRenderer.MeasureText("X", btnFont);
                         g_TextRenderer.RenderText(dl, ImVec2(delMin.x + (delW - xSize.x) * 0.5f, delMin.y + (btnH - xSize.y) * 0.5f), "X", delHover ? Colors::Red() : Colors::TextDim(), btnFont);
-                        
+
                         dl->AddRectFilled(saveMin, saveMax, saveHover ? Colors::WithAlpha(Colors::AccentDim(), 0.4f) : Colors::BackgroundDark(), 3.0f);
                         dl->AddRect(saveMin, saveMax, saveHover ? Colors::Accent() : Colors::Border(), 3.0f, 0, 1.0f);
                         ImVec2 saveSize = g_TextRenderer.MeasureText("SAVE", btnFont);
                         g_TextRenderer.RenderText(dl, ImVec2(saveMin.x + (saveW - saveSize.x) * 0.5f, saveMin.y + (btnH - saveSize.y) * 0.5f), "SAVE", saveHover ? Colors::TextActive() : Colors::TextDim(), btnFont);
-                        
+
                         ImU32 loadBg = isSelected ? Colors::Accent() : (loadHover ? Colors::WithAlpha(Colors::AccentDim(), 0.5f) : Colors::BackgroundDark());
                         dl->AddRectFilled(loadMin, loadMax, loadBg, 3.0f);
                         dl->AddRect(loadMin, loadMax, isSelected ? Colors::AccentHover() : (loadHover ? Colors::Accent() : Colors::Border()), 3.0f, 0, 1.0f);
                         const char* loadLabel = isSelected ? "ACTIVE" : "LOAD";
                         ImVec2 loadSize = g_TextRenderer.MeasureText(loadLabel, btnFont);
                         g_TextRenderer.RenderText(dl, ImVec2(loadMin.x + (loadW - loadSize.x) * 0.5f, loadMin.y + (btnH - loadSize.y) * 0.5f), loadLabel, isSelected ? Colors::BackgroundDark() : (loadHover ? Colors::TextActive() : Colors::TextDim()), btnFont);
-                        
+
                         if (ImGui::IsMouseClicked(0) && !g_Config.dropdownConsumedClick && !g_Config.IsPopupBlocking()) {
                             if (delHover) {
                                 profileToDelete = i;
@@ -2203,14 +2203,14 @@ namespace KrxSlaxy {
                         g_Config.configTab.selectedProfile = (int)g_Config.configTab.profiles.size() - 1;
                     }
                 }
-                
+
                 EndGroup();
             }
             ImGui::PopStyleVar();
             if (g_Config.activeMainTab == 1) {
                 RenderFooter();
             }
-            
+
             EndFrame();
             {
                 State& dragState = State::Get();
@@ -2252,7 +2252,7 @@ namespace KrxSlaxy {
                     Colors::Border(), 8.0f, 0, 1.0f
                 );
             }
-            
+
             ImGui::End();
             ImGui::PopStyleColor(2);
             ImGui::PopStyleVar(4);
@@ -2261,13 +2261,13 @@ namespace KrxSlaxy {
             RenderKeybindList();
             Colors::GlobalAlpha() = 1.0f;
         }
-        
+
         void RenderWatermark(float fps, float cpuUsage, float gpuUsage) {
             (void)fps;
             (void)cpuUsage;
             (void)gpuUsage;
         }
-        
+
         void RenderKeybindList() {
             ImDrawList* dl = ImGui::GetForegroundDrawList();
             ImGuiIO& io = ImGui::GetIO();
@@ -2288,9 +2288,9 @@ namespace KrxSlaxy {
                     }
                 }
             }
-            std::sort(activeBinds.begin(), activeBinds.end(), 
-                [](const auto& a, const auto& b) { 
-                    return s_activationOrder[a.second] < s_activationOrder[b.second]; 
+            std::sort(activeBinds.begin(), activeBinds.end(),
+                [](const auto& a, const auto& b) {
+                    return s_activationOrder[a.second] < s_activationOrder[b.second];
                 });
             for (auto it = s_itemAnims.begin(); it != s_itemAnims.end(); ++it) {
                 if (currentActiveBinds.find(it->first) == currentActiveBinds.end()) {
@@ -2344,7 +2344,7 @@ namespace KrxSlaxy {
             int alphaInt = (int)(220 * s_listAlpha);
             int borderAlphaInt = (int)(255 * s_listAlpha);
             int textAlphaInt = (int)(255 * s_listAlpha);
-            
+
             ImU32 bgColor = Colors::WithAlpha(Colors::BackgroundDark(), s_listAlpha * 0.88f);
             ImU32 borderColor = Colors::WithAlpha(Colors::Border(), s_listAlpha);
             ImU32 accentColor = Colors::WithAlpha(Colors::Accent(), s_listAlpha);
@@ -2421,11 +2421,11 @@ namespace KrxSlaxy {
                     allItems.push_back(fadingPair.second);
                 }
             }
-            std::sort(allItems.begin(), allItems.end(), 
-                [](const auto& a, const auto& b) { 
+            std::sort(allItems.begin(), allItems.end(),
+                [](const auto& a, const auto& b) {
                     int orderA = s_activationOrder.count(a.second) ? s_activationOrder[a.second] : 999999;
                     int orderB = s_activationOrder.count(b.second) ? s_activationOrder[b.second] : 999999;
-                    return orderA < orderB; 
+                    return orderA < orderB;
                 });
             float itemY = itemsStartY;
             for (const auto& bind : allItems) {
@@ -2439,12 +2439,12 @@ namespace KrxSlaxy {
                 int itemAlphaInt = (int)(220 * s_listAlpha * itemAnim);
                 int itemBorderAlphaInt = (int)(255 * s_listAlpha * itemAnim);
                 int itemTextAlphaInt = (int)(255 * s_listAlpha * itemAnim);
-                
+
                 ImU32 itemBgColor = Colors::WithAlpha(Colors::PanelBg(), s_listAlpha * itemAnim);
                 ImU32 itemBorderColor = Colors::WithAlpha(Colors::Border(), s_listAlpha * itemAnim);
                 ImU32 itemAccentColor = Colors::WithAlpha(Colors::Accent(), s_listAlpha * itemAnim);
                 ImU32 itemGrayText = Colors::WithAlpha(Colors::TextInactive(), s_listAlpha * itemAnim);
-                
+
                 ImVec2 itemMin(headerMin.x + slideOffset, itemY);
                 ImVec2 itemMax(headerMin.x + panelWidth + slideOffset, itemY + itemHeight);
                 dl->AddRectFilled(itemMin, itemMax, itemBgColor, 0.0f);
@@ -2453,7 +2453,7 @@ namespace KrxSlaxy {
                 g_TextRenderer.RenderText(dl, ImVec2(itemMin.x + innerPadding, textY), bind.first, itemAccentColor, g_TextFont);
                 ImVec2 keySize = g_TextRenderer.MeasureText(bind.first, g_TextFont);
                 g_TextRenderer.RenderText(dl, ImVec2(itemMin.x + innerPadding + keySize.x + 10.0f, textY), bind.second, itemGrayText, g_TextFont);
-                
+
                 itemY += itemHeight + itemGap;
             }
         }
@@ -2461,6 +2461,5 @@ namespace KrxSlaxy {
     }
 
 }
-
 
 

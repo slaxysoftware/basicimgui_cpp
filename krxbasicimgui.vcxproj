@@ -73,7 +73,6 @@
     <FREETYPE_LIB_X86>E:\download\freetype-windows-binaries-2.14.1 (1)\freetype-windows-binaries-2.14.1\release static\vs2015-2022\win32</FREETYPE_LIB_X86>
     <FREETYPE_LIB_X64>E:\download\freetype-windows-binaries-2.14.1 (1)\freetype-windows-binaries-2.14.1\release static\vs2015-2022\win64</FREETYPE_LIB_X64>
   </PropertyGroup>
-  <!-- Output directories -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
@@ -94,7 +93,6 @@
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>krxbasicimgui</TargetName>
   </PropertyGroup>
-  <!-- Debug|Win32 -->
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
@@ -112,7 +110,6 @@
       <AdditionalLibraryDirectories>$(FREETYPE_LIB_X86);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <!-- Release|Win32 -->
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
@@ -134,7 +131,6 @@
       <AdditionalLibraryDirectories>$(FREETYPE_LIB_X86);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <!-- Debug|x64 -->
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
@@ -152,7 +148,6 @@
       <AdditionalLibraryDirectories>$(FREETYPE_LIB_X64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <!-- Release|x64 -->
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
@@ -174,7 +169,6 @@
       <AdditionalLibraryDirectories>$(FREETYPE_LIB_X64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <!-- Source Files -->
   <ItemGroup>
     <ClCompile Include="imgui_text_renderer.cpp" />
     <ClCompile Include="loader_framework.cpp" />
@@ -188,7 +182,6 @@
     <ClCompile Include="imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui_impl_win32.cpp" />
   </ItemGroup>
-  <!-- Header Files -->
   <ItemGroup>
     <ClInclude Include="imgui_text_renderer.h" />
     <ClInclude Include="loader_framework.h" />

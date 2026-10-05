@@ -1,5 +1,5 @@
-/* E:\download\Verdana-Bold.ttf (8/14/2021 10:08:08 AM)
-   StartOffset(h): 00000000, EndOffset(h): 0001E7C7, Length(h): 0001E7C8 */
+
+
 
 unsigned char verdanabold[124872] = {
 	0x00, 0x01, 0x00, 0x00, 0x00, 0x12, 0x01, 0x00, 0x00, 0x04, 0x00, 0x20,

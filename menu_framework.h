@@ -17,7 +17,7 @@ namespace KrxSlaxy {
             v.w *= GlobalAlpha();
             return ImGui::ColorConvertFloat4ToU32(v);
         }
-        
+
         inline ImU32 Background()       { return ApplyAlpha(IM_COL32(8, 11, 18, 255)); }
         inline ImU32 BackgroundDark()   { return ApplyAlpha(IM_COL32(8, 11, 18, 255)); }
         inline ImU32 TopBar()           { return ApplyAlpha(IM_COL32(11, 16, 27, 255)); }
@@ -38,21 +38,21 @@ namespace KrxSlaxy {
         inline ImU32 ToggleOn()         { return ApplyAlpha(IM_COL32(59, 130, 246, 255)); }
         inline ImU32 GearIcon()         { return ApplyAlpha(IM_COL32(143, 156, 176, 255)); }
         inline ImU32 GearIconHover()    { return ApplyAlpha(IM_COL32(232, 237, 245, 255)); }
-        
+
         inline ImVec4 ToVec4(ImU32 col) {
             return ImGui::ColorConvertU32ToFloat4(col);
         }
-        
+
         inline ImU32 FromVec4(const ImVec4& col) {
             return ImGui::ColorConvertFloat4ToU32(col);
         }
-        
+
         inline ImU32 WithAlpha(ImU32 col, float alpha) {
             ImVec4 v = ToVec4(col);
             v.w = alpha * GlobalAlpha();
             return FromVec4(v);
         }
-        
+
         inline ImU32 LerpColor(ImU32 a, ImU32 b, float t) {
             ImVec4 va = ToVec4(a);
             ImVec4 vb = ToVec4(b);
@@ -70,12 +70,12 @@ namespace KrxSlaxy {
         Toggle = 1,
         Always = 2
     };
-    
+
     struct Keybind {
         int key = 0;
         KeybindType type = KeybindType::Hold;
         bool active = false;
-        
+
         bool IsActive() const;
         const char* GetKeyName() const;
         static const char* GetTypeName(KeybindType t);
@@ -171,7 +171,7 @@ namespace KrxSlaxy {
             bool skeleton = false;
             bool lineOfSight = false;
             bool sounds = false;
-            
+
             float boundingBoxColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
             float nameColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
             float healthBarColor[4] = {0.0f, 1.0f, 0.0f, 1.0f};
@@ -182,7 +182,7 @@ namespace KrxSlaxy {
             float skeletonColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
             float lineOfSightColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
             float soundsColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
-            
+
             int flagsSelection = 0;
             enum FlagBits {
                 FLAG_ARMOR      = 1 << 0,
@@ -201,7 +201,7 @@ namespace KrxSlaxy {
             bool overlayChams = false;
             bool backtrackChams = false;
             bool disableOcclusion = false;
-            
+
             float visibleColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
             float invisibleColor[4] = {0.855f, 0.447f, 0.447f, 1.0f};
             float overlayColor[4] = {0.447f, 0.855f, 0.537f, 1.0f};
@@ -210,7 +210,7 @@ namespace KrxSlaxy {
         struct {
             bool glow = false;
             bool offscreenArrows = false;
-            
+
             float glowColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
             float offscreenArrowsColor[4] = {0.231f, 0.510f, 0.965f, 1.0f};
         } other;
@@ -314,7 +314,7 @@ namespace KrxSlaxy {
         float panelRounding = 4.0f;
         float itemRounding = 3.0f;
         float fontSize = 14.0f;
-        
+
         static Style& Get() {
             static Style instance;
             return instance;
@@ -328,7 +328,7 @@ namespace KrxSlaxy {
             float currentGroupWidth;
             float currentGroupX;
             ImDrawList* drawList;
-            
+
             static State& Get() {
                 static State instance;
                 return instance;

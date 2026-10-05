@@ -12,17 +12,17 @@ namespace Loader {
     LoaderConfig g_LoaderConfig;
 
     namespace GUI {
-        
+
         void Initialize() {
             g_LoaderConfig = LoaderConfig();
             g_LoaderConfig.windowAlpha = 0.0f;
             g_LoaderConfig.windowScale = 0.95f;
         }
-        
+
         bool InputField(const char* label, const char* placeholder, char* buffer, size_t bufferSize, bool isPassword, bool* focused) {
             ImGuiIO& io = ImGui::GetIO();
             ImDrawList* dl = ImGui::GetWindowDrawList();
-            
+
             const float fieldWidth = 280.0f;
             const float fieldHeight = 36.0f;
             const float padding = 12.0f;
@@ -35,11 +35,11 @@ namespace Loader {
             static std::map<std::string, int> s_cursorPos;
             static std::map<std::string, int> s_selectionStart;
             static std::map<std::string, bool> s_isDragging;
-            
+
             int& cursorPos = s_cursorPos[label];
             int& selectionStart = s_selectionStart[label];
             bool& isDragging = s_isDragging[label];
-            
+
             int len = (int)strlen(buffer);
             if (cursorPos > len) cursorPos = len;
             if (cursorPos < 0) cursorPos = 0;
@@ -119,11 +119,11 @@ namespace Loader {
             bool valueChanged = false;
             static std::map<std::string, float> s_cursorBlink;
             float& cursorBlink = s_cursorBlink[label];
-            
+
             if (*focused) {
                 cursorBlink += io.DeltaTime;
                 if (cursorBlink > 1.0f) cursorBlink = 0.0f;
-                
+
                 bool ctrlHeld = io.KeyCtrl;
                 bool shiftHeld = io.KeyShift;
                 if (ctrlHeld && ImGui::IsKeyPressed(ImGuiKey_A)) {
@@ -216,7 +216,7 @@ namespace Loader {
                 if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
                 }
             }
-            dl->PushClipRect(ImVec2(fieldMin.x + padding - 2, fieldMin.y), 
+            dl->PushClipRect(ImVec2(fieldMin.x + padding - 2, fieldMin.y),
                             ImVec2(fieldMax.x - padding + 2, fieldMax.y), true);
             if (*focused && hasSelection()) {
                 auto [start, end] = getSelectionRange();
@@ -230,7 +230,7 @@ namespace Loader {
                 }
                 ImVec2 startSize = g_TextRenderer.MeasureText(beforeStart, g_TextFont);
                 ImVec2 endSize = g_TextRenderer.MeasureText(beforeEnd, g_TextFont);
-                
+
                 dl->AddRectFilled(
                     ImVec2(textPos.x + startSize.x, fieldMin.y + 6),
                     ImVec2(textPos.x + endSize.x, fieldMax.y - 6),
@@ -263,16 +263,16 @@ namespace Loader {
                     textColor, 1.0f
                 );
             }
-            
+
             dl->PopClipRect();
-            
+
             return valueChanged;
         }
-        
+
         bool Checkbox(const char* label, bool* value) {
             ImGuiIO& io = ImGui::GetIO();
             ImDrawList* dl = ImGui::GetWindowDrawList();
-            
+
             const float boxSize = 16.0f;
             const float spacing = 8.0f;
             std::string lowerLabel = KrxSlaxy::GUI::ToLower(label);
@@ -286,7 +286,7 @@ namespace Loader {
             ImVec2 interactMax(pos.x + totalSize.x, pos.y + totalSize.y);
             bool hovered = ImGui::IsMouseHoveringRect(interactMin, interactMax);
             bool clicked = hovered && ImGui::IsMouseClicked(0);
-            
+
             if (clicked) {
                 *value = !*value;
             }
@@ -306,7 +306,7 @@ namespace Loader {
                 ImVec2 center(boxMin.x + boxSize * 0.5f, boxMin.y + boxSize * 0.5f);
                 float cs = boxSize * 0.25f * checkAnim;
                 ImU32 checkColor = Colors::WithAlpha(Colors::TextActive(), checkAnim);
-                
+
                 ImVec2 points[3] = {
                     ImVec2(center.x - cs * 0.9f, center.y),
                     ImVec2(center.x - cs * 0.2f, center.y + cs * 0.7f),
@@ -316,19 +316,19 @@ namespace Loader {
             }
             ImVec2 labelPos(boxMax.x + spacing, pos.y + (boxSize - g_TextFont.size) * 0.5f);
             g_TextRenderer.RenderText(dl, labelPos, lowerLabel, labelColor, g_TextFont);
-            
+
             return clicked;
         }
-        
+
         bool Button(const char* label, float width) {
             ImGuiIO& io = ImGui::GetIO();
             ImDrawList* dl = ImGui::GetWindowDrawList();
-            
+
             const float height = 40.0f;
             const float rounding = 4.0f;
             std::string lowerLabel = KrxSlaxy::GUI::ToLower(label);
             ImVec2 labelSize = g_TextRenderer.MeasureText(lowerLabel, g_TextFont);
-            
+
             if (width <= 0.0f) {
                 width = labelSize.x + 60.0f;
             }
@@ -372,15 +372,15 @@ namespace Loader {
                 drawMin.y + (height - g_TextFont.size) * 0.5f
             );
             g_TextRenderer.RenderText(dl, labelPos, lowerLabel, Colors::TextActive(), g_TextFont);
-            
+
             return clicked;
         }
-        
+
         void RenderLoginPage() {
             ImDrawList* dl = ImGui::GetWindowDrawList();
             ImVec2 windowPos = ImGui::GetWindowPos();
             ImVec2 windowSize = ImGui::GetWindowSize();
-            
+
             float emblemY = windowPos.y + 26.0f;
             ImVec2 emblemCenter(windowPos.x + windowSize.x * 0.5f - 48.0f, emblemY);
             KrxSlaxy::GUI::DrawKrxSlaxyEmblem(dl, emblemCenter, 13.0f, Colors::Accent(), Colors::AccentHover());
@@ -391,7 +391,7 @@ namespace Loader {
             ImVec2 titlePos(emblemCenter.x + 20.0f, emblemY - krxSize.y * 0.5f);
             g_TextRenderer.RenderText(dl, titlePos, "KRX ", Colors::TextActive(), loaderTitleFont, FLAG_DROPSHADOW);
             g_TextRenderer.RenderText(dl, ImVec2(titlePos.x + krxSize.x, titlePos.y), "SLAXY", Colors::Accent(), loaderTitleFont, FLAG_DROPSHADOW);
-            
+
             const float contentWidth = 280.0f;
             float offsetX = (windowSize.x - contentWidth) * 0.5f;
             float offsetY = 58.0f;
@@ -429,7 +429,7 @@ namespace Loader {
             }
             if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
                 bool shiftHeld = ImGui::GetIO().KeyShift;
-                
+
                 if (g_LoaderConfig.usernameFocused && !shiftHeld) {
                     g_LoaderConfig.usernameFocused = false;
                     g_LoaderConfig.passwordFocused = true;
@@ -444,7 +444,7 @@ namespace Loader {
                 }
             }
         }
-        
+
         void RenderLoadingPage(float alpha, float scale) {
             ImGuiIO& io = ImGui::GetIO();
             ImDrawList* dl = ImGui::GetWindowDrawList();
@@ -507,11 +507,11 @@ namespace Loader {
             }
             dl->PathStroke(spinnerColor, ImDrawFlags_None, thickness);
         }
-        
+
         void RenderTransition() {
             ImGuiIO& io = ImGui::GetIO();
             g_LoaderConfig.transitionProgress += io.DeltaTime * 2.0f;
-            
+
             if (g_LoaderConfig.transitionProgress >= 1.0f) {
                 g_LoaderConfig.transitionProgress = 1.0f;
                 g_LoaderConfig.currentState = State::Complete;
@@ -519,7 +519,7 @@ namespace Loader {
             g_LoaderConfig.windowAlpha = 1.0f - g_LoaderConfig.transitionProgress;
             g_LoaderConfig.windowScale = 1.0f - (g_LoaderConfig.transitionProgress * 0.05f);
         }
-        
+
         bool Render() {
             ImGuiIO& io = ImGui::GetIO();
             if (g_LoaderConfig.currentState == State::Complete) {
@@ -542,10 +542,10 @@ namespace Loader {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
             ImGui::PushStyleColor(ImGuiCol_WindowBg, Colors::ToVec4(Colors::BackgroundDark()));
             ImGui::PushStyleColor(ImGuiCol_Border, Colors::ToVec4(Colors::Border()));
-            
+
             ImGui::SetNextWindowPos(windowPos);
             ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
-            
+
             ImGui::Begin("##KrxSlaxyLoader", nullptr,
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
@@ -585,7 +585,7 @@ namespace Loader {
             float transitionSpeed = 6.0f;
             if (g_LoaderConfig.isTransitioning) {
                 g_LoaderConfig.pageTransition -= io.DeltaTime * transitionSpeed;
-                
+
                 if (g_LoaderConfig.pageTransition <= 0.0f) {
                     g_LoaderConfig.pageTransition = 0.0f;
                     g_LoaderConfig.isTransitioning = false;
@@ -606,7 +606,7 @@ namespace Loader {
             }
             if (g_LoaderConfig.currentState == State::Loading) {
                 g_LoaderConfig.spinnerAnimTime += io.DeltaTime;
-                
+
                 if (!g_LoaderConfig.isTransitioning) {
                     g_LoaderConfig.loadingSpinnerAlpha = ImLerp(g_LoaderConfig.loadingSpinnerAlpha, 1.0f, io.DeltaTime * 8.0f);
                     g_LoaderConfig.loadingTime += io.DeltaTime;
@@ -638,11 +638,11 @@ namespace Loader {
                     break;
             }
             dl->AddRect(bgMin, bgMax, Colors::Border(), 8.0f, 0, 1.0f);
-            
+
             ImGui::End();
             ImGui::PopStyleColor(2);
             ImGui::PopStyleVar(4);
-            
+
             return false;
         }
 
@@ -650,6 +650,5 @@ namespace Loader {
 
 }
 }
-
 
 

@@ -1,6 +1,6 @@
 #pragma once
-// File: 'fa-solid-900.ttf' (420332 bytes)
-// Exported using binary_to_compressed_c.cpp
+
+
 static const unsigned int FontAwesome6Solid_compressed_size = 244498;
 static const unsigned int FontAwesome6Solid_compressed_data[ 244500 / 4 ] =
 {
