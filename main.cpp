@@ -9,7 +9,7 @@
 #include "verdanabold.h"
 #include "smalle.h"
 #include "menubackground.h"
-#include "lumin_fonts.h"
+#include "inter_fonts.h"
 #include "fontawesome/RawAwesome6.hpp"
 #include <d3d11.h>
 
