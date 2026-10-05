@@ -1,0 +1,33 @@
+# visual studio
+.vs/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# build output
+bin/
+obj/
+build/
+out/
+x64/
+x86/
+Debug/
+Release/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# local tools
+.vscode/
+.agent/
+
+# runtime/session files
+imgui.ini
+
+# local backups
+*.bak
